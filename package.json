@@ -1,0 +1,18 @@
+{
+  "name": "serena",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Serena — Onboarding inclusivo voz a datos para la Silver Economy",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev:backend": "pnpm --filter @serena/backend-edge dev",
+    "dev:dashboard": "pnpm --filter @serena/dashboard-b2b dev",
+    "dev:landing": "pnpm --filter @serena/landing-page dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "db:push": "supabase db push"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}

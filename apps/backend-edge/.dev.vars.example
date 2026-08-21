@@ -1,0 +1,6 @@
+# Copiar a `.dev.vars` (gitignored) para `wrangler dev`.
+SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOi..."
+WHATSAPP_TOKEN="EAAG..."
+WHATSAPP_APP_SECRET="abc123..."
+ANTHROPIC_API_KEY="sk-ant-..."
+OPENAI_API_KEY="sk-..."

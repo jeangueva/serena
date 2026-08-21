@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/*
+  Paleta sobria de una sola tinta. El personal administrativo mira esta pantalla
+  ocho horas: el color se reserva para el estado del paciente, nada mas.
+*/
+@theme {
+  --color-canvas: oklch(0.985 0.002 250);
+  --color-surface: oklch(1 0 0);
+  --color-line: oklch(0.922 0.004 250);
+  --color-ink: oklch(0.21 0.01 250);
+  --color-ink-soft: oklch(0.48 0.012 250);
+  --color-ink-faint: oklch(0.62 0.012 250);
+  --color-accent: oklch(0.52 0.11 195);
+  --color-accent-soft: oklch(0.96 0.02 195);
+  --color-warn: oklch(0.72 0.13 75);
+  --color-warn-soft: oklch(0.97 0.03 75);
+  --color-ok: oklch(0.62 0.12 155);
+  --color-ok-soft: oklch(0.96 0.03 155);
+  --color-danger: oklch(0.58 0.17 25);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius-card: 0.75rem;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+  /* Los datos clinicos se leen en columna: tabular-nums evita el baile de digitos. */
+  table, .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}

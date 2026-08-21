@@ -1,0 +1,20 @@
+name = "serena-backend-edge"
+main = "src/index.ts"
+compatibility_date = "2026-08-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Variables no sensibles. Los secretos van por `wrangler secret put`:
+#   WHATSAPP_TOKEN, WHATSAPP_APP_SECRET, ANTHROPIC_API_KEY,
+#   OPENAI_API_KEY, SUPABASE_SERVICE_ROLE_KEY
+[vars]
+SUPABASE_URL = "https://xxxxxxxxxxxx.supabase.co"
+WHATSAPP_PHONE_NUMBER_ID = "123456789012345"
+WHATSAPP_VERIFY_TOKEN = "cambiame"
+WHATSAPP_GRAPH_VERSION = "v21.0"
+WHATSAPP_TEMPLATE_NAME = "serena_invitacion_onboarding"
+WHATSAPP_TEMPLATE_LANG = "es"
+ANTHROPIC_MODEL = "claude-sonnet-5"
+TRANSCRIPTION_MODEL = "whisper-1"
+
+[observability]
+enabled = true

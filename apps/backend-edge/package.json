@@ -1,0 +1,26 @@
+{
+  "name": "@serena/backend-edge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "test": "vitest run",
+    "secrets:push": "echo 'wrangler secret put WHATSAPP_TOKEN | WHATSAPP_APP_SECRET | ANTHROPIC_API_KEY | OPENAI_API_KEY | SUPABASE_SERVICE_ROLE_KEY'"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0",
+    "@serena/types": "workspace:*",
+    "@supabase/supabase-js": "^2.112.3",
+    "hono": "^4.13.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260820.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "wrangler": "^4.101.0"
+  }
+}

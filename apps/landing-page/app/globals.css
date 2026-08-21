@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+/*
+  La landing habla a directoras de clínica, no a developers: tipografía grande,
+  fondo cálido y una sola tinta de acento. Nada que distraiga del argumento.
+*/
+@theme {
+  --color-canvas: oklch(0.985 0.008 90);
+  --color-surface: oklch(1 0 0);
+  --color-line: oklch(0.91 0.008 90);
+  --color-ink: oklch(0.24 0.015 250);
+  --color-ink-soft: oklch(0.48 0.014 250);
+  --color-ink-faint: oklch(0.63 0.012 250);
+  --color-accent: oklch(0.52 0.11 195);
+  --color-accent-soft: oklch(0.95 0.03 195);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+}
