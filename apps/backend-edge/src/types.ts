@@ -15,6 +15,8 @@ export interface Env {
   WHATSAPP_VERIFY_TOKEN: string;
   ANTHROPIC_API_KEY: string;
   OPENAI_API_KEY: string;
+  /** Opcional: URL que recibe el aviso de urgencia (Slack, guardia, etc.). */
+  ALERT_WEBHOOK_URL: string;
 }
 
 /** Subconjunto del payload de webhook de WhatsApp Cloud API que usamos. */

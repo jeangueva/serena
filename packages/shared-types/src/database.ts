@@ -38,6 +38,17 @@ export type OnboardingLog = {
   timestamp: string;
 };
 
+export type UrgencyAlert = {
+  id: string;
+  patient_id: string;
+  clinic_id: string;
+  motivo: string;
+  frase_paciente: string | null;
+  created_at: string;
+  acknowledged_at: string | null;
+  acknowledged_by: string | null;
+};
+
 export type ProcessedMessage = {
   message_id: string;
   patient_id: string | null;
@@ -79,6 +90,17 @@ export interface Database {
           completed_at?: string | null;
         };
         Update: Partial<Omit<Patient, "id" | "clinic_id">>;
+        Relationships: [];
+      };
+      urgency_alerts: {
+        Row: UrgencyAlert;
+        Insert: Omit<UrgencyAlert, "id" | "created_at" | "acknowledged_at" | "acknowledged_by"> & {
+          id?: string;
+          created_at?: string;
+          acknowledged_at?: string | null;
+          acknowledged_by?: string | null;
+        };
+        Update: Partial<Omit<UrgencyAlert, "id" | "clinic_id" | "patient_id">>;
         Relationships: [];
       };
       processed_messages: {

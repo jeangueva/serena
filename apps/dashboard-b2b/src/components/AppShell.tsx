@@ -3,6 +3,7 @@ import { LogOut, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { UrgencyBanner } from "@/components/UrgencyBanner";
 import { SOURCE_URL } from "@/lib/config";
 
 export function AppShell() {
@@ -43,6 +44,8 @@ export function AppShell() {
           </div>
         </div>
       </header>
+
+      <UrgencyBanner />
 
       <main className="mx-auto max-w-6xl px-6 py-8">
         <Outlet />

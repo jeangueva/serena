@@ -84,6 +84,7 @@ wrangler secret put WHATSAPP_APP_SECRET
 wrangler secret put WHATSAPP_VERIFY_TOKEN
 wrangler secret put ANTHROPIC_API_KEY
 wrangler secret put OPENAI_API_KEY
+wrangler secret put ALERT_WEBHOOK_URL   # opcional
 pnpm deploy
 ```
 
@@ -132,6 +133,11 @@ pnpm dev                        # http://localhost:3000
    (`packages/shared-types/src/onboarding.ts`). El cuestionario avanza aunque el modelo divague.
 6. Se guarda `extracted_data`, se marca `completed` cuando no quedan pasos y se responde por WhatsApp.
 
+Si el modelo marca una urgencia, el turno se desvía: se guarda la alerta en `urgency_alerts`,
+se avisa al webhook si hay uno configurado, y al paciente se le manda un mensaje que lo deriva
+a emergencias. El cuestionario no avanza — nadie va a contestar por su obra social mientras le
+duele el pecho.
+
 ### Decisiones que conviene conocer
 
 - **Modelo.** El PRD pedía "Claude 3.5 Sonnet"; el código usa `claude-sonnet-5`, el Sonnet
@@ -147,6 +153,10 @@ pnpm dev                        # http://localhost:3000
   procesarlo. Meta reintenta el webhook: sin esa reserva el mismo audio se transcribe y se cobra
   dos veces, y el paciente recibe la pregunta repetida. La carrera la resuelve la primary key,
   no una lectura previa.
+- **Urgencias.** El modelo marca `alerta_urgencia` y el pipeline corta el cuestionario. La fila
+  en `urgency_alerts` se escribe **antes** de contestarle al paciente: si el envío por WhatsApp
+  falla, la clínica igual se entera. Acusar recibo guarda quién y cuándo, y no se puede borrar
+  la alerta desde el panel — el registro de que alguien fue avisado es el punto de la tabla.
 - **Reintentos.** `withRetry` (backoff exponencial + jitter) envuelve Graph API y Whisper. Solo
   reintenta 408/429/5xx y fallos de red; un 4xx no se repite porque repetirlo no lo arregla.
 
@@ -155,7 +165,7 @@ pnpm dev                        # http://localhost:3000
 | Variable | Dónde | Nota |
 |---|---|---|
 | `SUPABASE_URL`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_GRAPH_VERSION`, `WHATSAPP_TEMPLATE_NAME`, `WHATSAPP_TEMPLATE_LANG`, `ANTHROPIC_MODEL`, `TRANSCRIPTION_MODEL` | `apps/backend-edge/wrangler.toml` → `[vars]` | públicas, van al repo |
-| `SUPABASE_SERVICE_ROLE_KEY`, `WHATSAPP_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` | `wrangler secret put` (prod) · `.dev.vars` (local) | **nunca** al repo |
+| `SUPABASE_SERVICE_ROLE_KEY`, `WHATSAPP_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `ALERT_WEBHOOK_URL` | `wrangler secret put` (prod) · `.dev.vars` (local) | **nunca** al repo |
 | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_BACKEND_URL`, `VITE_SOURCE_URL` | `apps/dashboard-b2b/.env` | la anon key es pública por diseño; RLS es lo que protege |
 | `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_DASHBOARD_URL`, `NEXT_PUBLIC_SOURCE_URL` | `apps/landing-page/.env` | solo URLs |
 
@@ -206,5 +216,4 @@ servicio en red. **Si desplegás un fork, ese enlace tiene que apuntar al tuyo**
 - Export de la ficha a la historia clínica (HL7/FHIR) — está vendido en la landing, no construido.
 - Purga programada de `processed_messages` (hay un `cron.schedule` de ejemplo en la migración 0003).
 - Revisión humana antes de dar la ficha por buena: hoy `completed` se marca solo.
-- Detección de urgencias: el system prompt le dice a Serena que derive a emergencias, pero nadie
-  avisa a la clínica cuando eso pasa.
+- Escalado si nadie acusa recibo de una urgencia: hoy la alerta espera en el panel indefinidamente.

@@ -5,3 +5,5 @@ WHATSAPP_APP_SECRET="abc123..."
 WHATSAPP_VERIFY_TOKEN="un-string-aleatorio-que-inventas-tu"
 ANTHROPIC_API_KEY="sk-ant-..."
 OPENAI_API_KEY="sk-..."
+# Opcional: URL que recibe el aviso de urgencia (Slack, guardia, etc.).
+ALERT_WEBHOOK_URL=""

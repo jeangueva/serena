@@ -35,12 +35,18 @@ TU TRABAJO CON LOS DATOS
 NUNCA
 - Nunca des consejo médico, diagnóstico ni opinión sobre un tratamiento.
 - Nunca pidas datos bancarios, contraseñas ni claves.
-- Si el paciente describe una urgencia (dolor en el pecho, caída, falta de aire), no sigas el cuestionario: dile con calma que llame de inmediato a emergencias y que la clínica será avisada.`;
+- Si el paciente describe una urgencia, no sigas el cuestionario: marca alerta_urgencia.detectada en true y describe el motivo en una línea, citando la frase del paciente. El mensaje que recibe el paciente lo genera el sistema, no vos.
+
+QUÉ CUENTA COMO URGENCIA
+- Dolor en el pecho, falta de aire, desmayo, caída reciente, sangrado, confusión súbita, dificultad para hablar o mover un lado del cuerpo, fiebre alta con decaimiento, pensamientos de hacerse daño.
+- También cuenta si lo menciona de pasada mientras contesta otra cosa: "ando con una puntada en el pecho desde ayer" es una urgencia aunque la pregunta fuera sobre su documento.
+- Ante la duda, marcá la alerta. Una alerta de más la descarta la clínica en diez segundos; una de menos la paga el paciente.
+- No cuenta un síntoma que el paciente relata como parte de su historia clínica pasada ("me operaron del corazón en 2019", "soy hipertensa"): eso es un dato, no una emergencia en curso.`;
 
 const TURN_SCHEMA = {
   type: "object",
   additionalProperties: false,
-  required: ["datos", "acuse", "requiere_repeticion"],
+  required: ["datos", "acuse", "requiere_repeticion", "alerta_urgencia"],
   properties: {
     datos: EXTRACTED_DATA_JSON_SCHEMA,
     acuse: {
@@ -52,13 +58,36 @@ const TURN_SCHEMA = {
       type: "boolean",
       description: "true si el audio no se entendió y hay que repetir la misma pregunta.",
     },
+    alerta_urgencia: {
+      type: "object",
+      additionalProperties: false,
+      required: ["detectada", "motivo", "frase_paciente"],
+      properties: {
+        detectada: { type: "boolean" },
+        motivo: {
+          type: ["string", "null"],
+          description: "Una línea, en lenguaje clínico, para el personal de la clínica. null si detectada es false.",
+        },
+        frase_paciente: {
+          type: ["string", "null"],
+          description: "Cita textual de la transcripción que motivó la alerta. null si detectada es false.",
+        },
+      },
+    },
   },
 } as const;
+
+export interface UrgencyFlag {
+  detectada: boolean;
+  motivo: string | null;
+  frase_paciente: string | null;
+}
 
 export interface SerenaTurn {
   datos: ExtractedData;
   acuse: string;
   requiere_repeticion: boolean;
+  alerta_urgencia: UrgencyFlag;
 }
 
 export interface InterpretParams {
@@ -119,6 +148,11 @@ export async function interpretTurn(env: Env, params: InterpretParams): Promise<
     datos: normalizeData(parsed.datos),
     acuse: (parsed.acuse ?? "Gracias, ya lo anoté.").trim(),
     requiere_repeticion: parsed.requiere_repeticion === true,
+    alerta_urgencia: {
+      detectada: parsed.alerta_urgencia?.detectada === true,
+      motivo: parsed.alerta_urgencia?.motivo ?? null,
+      frase_paciente: parsed.alerta_urgencia?.frase_paciente ?? null,
+    },
   };
 }
 

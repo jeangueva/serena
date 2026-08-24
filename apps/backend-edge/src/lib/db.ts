@@ -79,6 +79,26 @@ export async function claimMessage(
   return true;
 }
 
+/**
+ * Guarda la alerta antes de contestarle al paciente: si el envío por WhatsApp
+ * falla, la clínica igual tiene el aviso. El orden importa.
+ */
+export async function insertUrgencyAlert(
+  db: SupabaseClient<Database>,
+  patient: Pick<Patient, "id" | "clinic_id">,
+  motivo: string,
+  frasePaciente: string | null,
+): Promise<void> {
+  const { error } = await db.from("urgency_alerts").insert({
+    patient_id: patient.id,
+    clinic_id: patient.clinic_id,
+    motivo,
+    frase_paciente: frasePaciente,
+  });
+
+  if (error) throw new Error(`Supabase insertUrgencyAlert: ${error.message}`);
+}
+
 export async function logMessage(
   db: SupabaseClient<Database>,
   patientId: string,

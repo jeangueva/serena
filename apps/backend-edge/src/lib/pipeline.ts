@@ -1,6 +1,16 @@
 import { nextPendingStep, type ExtractedData } from "@serena/types";
 import type { Env, WhatsAppIncomingMessage } from "../types";
-import { claimMessage, currentData, findPatientByWhatsapp, logMessage, savePatientData, serviceClient } from "./db";
+import {
+  claimMessage,
+  currentData,
+  findPatientByWhatsapp,
+  insertUrgencyAlert,
+  logMessage,
+  savePatientData,
+  serviceClient,
+} from "./db";
+import { notifyUrgency } from "./notify";
+import { buildAlertSummary, buildUrgencyReply } from "./urgency";
 import { MetaClient } from "./meta";
 import { interpretTurn } from "./serena";
 import { transcribeAudio } from "./transcription";
@@ -83,12 +93,30 @@ export async function handleIncomingMessage(
       pendingLabel: pending?.label ?? null,
     });
 
-    // 3. Persistir. El estado se deriva del guion, no de la opinion del modelo.
+    // 3. Urgencia: corta el cuestionario. Se guarda la alerta y los datos que
+    // ya se habían extraído, pero no se avanza de paso ni se cierra la ficha.
+    if (turn.alerta_urgencia.detectada) {
+      const motivo = turn.alerta_urgencia.motivo ?? "El paciente describió una posible urgencia.";
+      await savePatientData(db, patient.id, turn.datos, false);
+      await insertUrgencyAlert(db, patient, motivo, turn.alerta_urgencia.frase_paciente);
+
+      const resumen = buildAlertSummary(patient.full_name, motivo, turn.alerta_urgencia.frase_paciente);
+      // El aviso externo no puede bloquear la respuesta al paciente, pero su
+      // fallo tampoco puede pasar en silencio.
+      await notifyUrgency(env, resumen, patient.id).catch((err: unknown) =>
+        console.error("notifyUrgency falló, la alerta queda solo en el panel:", err),
+      );
+
+      await reply(env, db, meta, patient.id, message.from, buildUrgencyReply(motivo));
+      return;
+    }
+
+    // 4. Persistir. El estado se deriva del guion, no de la opinion del modelo.
     const nextStep = turn.requiere_repeticion ? pending : nextPendingStep(turn.datos);
     const completed = nextStep === null;
     await savePatientData(db, patient.id, turn.datos, completed);
 
-    // 4. Contestar: acuse del modelo + siguiente pregunta deterministica.
+    // 5. Contestar: acuse del modelo + siguiente pregunta deterministica.
     // El saludo solo en el primer turno: la plantilla ya rompió el hielo, aquí
     // recién se abre la ventana de 24 h y Serena puede escribir texto libre.
     const cuerpo = composeReply(turn.acuse, turn.requiere_repeticion, nextStep);
