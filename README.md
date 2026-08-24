@@ -156,8 +156,8 @@ pnpm dev                        # http://localhost:3000
 |---|---|---|
 | `SUPABASE_URL`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_GRAPH_VERSION`, `WHATSAPP_TEMPLATE_NAME`, `WHATSAPP_TEMPLATE_LANG`, `ANTHROPIC_MODEL`, `TRANSCRIPTION_MODEL` | `apps/backend-edge/wrangler.toml` → `[vars]` | públicas, van al repo |
 | `SUPABASE_SERVICE_ROLE_KEY`, `WHATSAPP_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` | `wrangler secret put` (prod) · `.dev.vars` (local) | **nunca** al repo |
-| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_BACKEND_URL` | `apps/dashboard-b2b/.env` | la anon key es pública por diseño; RLS es lo que protege |
-| `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_DASHBOARD_URL` | `apps/landing-page/.env` | solo URLs |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_BACKEND_URL`, `VITE_SOURCE_URL` | `apps/dashboard-b2b/.env` | la anon key es pública por diseño; RLS es lo que protege |
+| `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_DASHBOARD_URL`, `NEXT_PUBLIC_SOURCE_URL` | `apps/landing-page/.env` | solo URLs |
 
 La `service_role` key salta RLS. Si termina en un bundle de frontend, cualquiera lee los datos
 de todas las clínicas: vive solo en el worker.
@@ -197,8 +197,9 @@ evita que un competidor levante un fork cerrado de Serena y lo venda.
 
 Para uso comercial con otros términos, hay licencia propietaria disponible: hola@serena.health.
 
-Pendiente de cumplimiento: la sección 13 pide que un servicio en red ofrezca a sus usuarios
-una forma de obtener el código. Falta el enlace a este repositorio en el panel.
+El panel y la landing enlazan al código en su pie, que es lo que la sección 13 exige de un
+servicio en red. **Si desplegás un fork, ese enlace tiene que apuntar al tuyo**: se cambia con
+`VITE_SOURCE_URL` (panel) y `NEXT_PUBLIC_SOURCE_URL` (landing), sin tocar código.
 
 ## Pendiente para producción
 

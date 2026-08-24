@@ -1,3 +1,5 @@
+import { SOURCE_URL } from "./site";
+
 export function Footer() {
   return (
     <footer className="border-t border-line bg-surface">
@@ -7,6 +9,9 @@ export function Footer() {
           <a href="#precios" className="hover:text-ink">Precios</a>
           <a href="#preguntas" className="hover:text-ink">Preguntas</a>
           <a href="mailto:hola@serena.health" className="hover:text-ink">hola@serena.health</a>
+          <a href={SOURCE_URL} target="_blank" rel="noreferrer" className="hover:text-ink">
+            Código fuente · AGPL-3.0
+          </a>
         </nav>
       </div>
     </footer>

@@ -3,6 +3,7 @@ import { LogOut, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SOURCE_URL } from "@/lib/config";
 
 export function AppShell() {
   const { clinic, session, signOut } = useAuth();
@@ -46,6 +47,19 @@ export function AppShell() {
       <main className="mx-auto max-w-6xl px-6 py-8">
         <Outlet />
       </main>
+
+      {/* AGPL §13: el usuario del servicio tiene derecho a llegar al código. */}
+      <footer className="mx-auto max-w-6xl px-6 pb-8 text-xs text-ink-faint">
+        Serena · AGPL-3.0 ·{" "}
+        <a
+          href={SOURCE_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="underline-offset-4 hover:text-ink-soft hover:underline"
+        >
+          código fuente
+        </a>
+      </footer>
     </div>
   );
 }

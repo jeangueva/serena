@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardBody } from "@/components/ui/card";
+import { SOURCE_URL } from "@/lib/config";
 
 export function Login() {
   const { session, signIn, signUp } = useAuth();
@@ -108,6 +109,13 @@ export function Login() {
         >
           {mode === "signin" ? "¿Primera vez? Registrá tu clínica" : "Ya tengo cuenta"}
         </button>
+
+        <p className="text-xs text-ink-faint">
+          AGPL-3.0 ·{" "}
+          <a href={SOURCE_URL} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
+            código fuente
+          </a>
+        </p>
       </div>
     </div>
   );

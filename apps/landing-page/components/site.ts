@@ -1,3 +1,5 @@
+export const SOURCE_URL = process.env.NEXT_PUBLIC_SOURCE_URL ?? "https://github.com/jeangueva/serena";
+
 export const DASHBOARD_URL = process.env.NEXT_PUBLIC_DASHBOARD_URL ?? "http://localhost:5173";
 
 export const PLANS = [
