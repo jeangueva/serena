@@ -8,6 +8,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%2B%20RLS-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
 [![Claude](https://img.shields.io/badge/Claude-Sonnet%205-D97757?logo=anthropic&logoColor=white)](https://docs.claude.com/)
+[![Licencia](https://img.shields.io/badge/licencia-AGPL--3.0-blue)](LICENSE)
 
 Onboarding clínico por voz para la Silver Economy. La clínica carga un paciente, Serena le
 escribe por WhatsApp, el paciente **contesta con notas de voz** y la IA devuelve la ficha
@@ -184,6 +185,20 @@ Prueba de punta a punta: creá una clínica desde `/login`, agregá un paciente 
 número, contestá con una nota de voz y mirá la ficha llenarse sola en el detalle del paciente.
 Para que Meta alcance tu worker local hace falta un túnel (`cloudflared tunnel --url
 http://localhost:8787`) y apuntar el webhook a esa URL.
+
+## Licencia
+
+[GNU AGPL-3.0](LICENSE) · Copyright (C) 2026 Serena.
+
+En corto: el código se puede leer, usar, modificar y estudiar. Lo que cambia respecto de una
+licencia permisiva es la cláusula de red (sección 13): **quien corra una versión modificada
+como servicio tiene que publicar su código**, aunque nunca distribuya un binario. Es lo que
+evita que un competidor levante un fork cerrado de Serena y lo venda.
+
+Para uso comercial con otros términos, hay licencia propietaria disponible: hola@serena.health.
+
+Pendiente de cumplimiento: la sección 13 pide que un servicio en red ofrezca a sus usuarios
+una forma de obtener el código. Falta el enlace a este repositorio en el panel.
 
 ## Pendiente para producción
 

@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "description": "Serena — Onboarding inclusivo voz a datos para la Silver Economy",
+  "license": "AGPL-3.0-only",
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev:backend": "pnpm --filter @serena/backend-edge dev",
