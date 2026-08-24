@@ -1,5 +1,6 @@
 # Serena
 
+[![CI](https://github.com/jeangueva/serena/actions/workflows/ci.yml/badge.svg)](https://github.com/jeangueva/serena/actions/workflows/ci.yml)
 [![Estado](https://img.shields.io/badge/estado-MVP-blue)](https://github.com/jeangueva/serena)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-Hono-F38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
@@ -158,6 +159,9 @@ La `service_role` key salta RLS. Si termina en un bundle de frontend, cualquiera
 de todas las clínicas: vive solo en el worker.
 
 ## Verificar que quedó bien
+
+Cada push y cada PR contra `main` corren estos mismos tres pasos en CI
+(`.github/workflows/ci.yml`). En local:
 
 ```bash
 pnpm -r typecheck                          # 4/4 paquetes
