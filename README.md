@@ -80,6 +80,7 @@ Producción:
 wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 wrangler secret put WHATSAPP_TOKEN
 wrangler secret put WHATSAPP_APP_SECRET
+wrangler secret put WHATSAPP_VERIFY_TOKEN
 wrangler secret put ANTHROPIC_API_KEY
 wrangler secret put OPENAI_API_KEY
 pnpm deploy
@@ -87,7 +88,9 @@ pnpm deploy
 
 En Meta (WhatsApp → Configuration) apuntá el webhook a
 `https://<tu-worker>.workers.dev/webhook/whatsapp` con el mismo `WHATSAPP_VERIFY_TOKEN` y
-suscribí el campo `messages`.
+suscribí el campo `messages`. El `WHATSAPP_VERIFY_TOKEN` lo inventás vos: es el string que
+Meta devuelve en el handshake para probar que el endpoint es tuyo. Va como secreto, no en
+`wrangler.toml`; si falta, el handshake responde 500 en vez de aceptar cualquier registro.
 
 **Plantilla de invitación (obligatoria).** La clínica escribe primero, y fuera de la ventana de
 24 h Meta solo acepta plantillas aprobadas: un texto libre se rechaza con el error 131047. Creá
@@ -150,8 +153,8 @@ pnpm dev                        # http://localhost:3000
 
 | Variable | Dónde | Nota |
 |---|---|---|
-| `SUPABASE_URL`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_GRAPH_VERSION`, `WHATSAPP_TEMPLATE_NAME`, `WHATSAPP_TEMPLATE_LANG`, `ANTHROPIC_MODEL`, `TRANSCRIPTION_MODEL` | `apps/backend-edge/wrangler.toml` → `[vars]` | públicas, van al repo |
-| `SUPABASE_SERVICE_ROLE_KEY`, `WHATSAPP_TOKEN`, `WHATSAPP_APP_SECRET`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` | `wrangler secret put` (prod) · `.dev.vars` (local) | **nunca** al repo |
+| `SUPABASE_URL`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_GRAPH_VERSION`, `WHATSAPP_TEMPLATE_NAME`, `WHATSAPP_TEMPLATE_LANG`, `ANTHROPIC_MODEL`, `TRANSCRIPTION_MODEL` | `apps/backend-edge/wrangler.toml` → `[vars]` | públicas, van al repo |
+| `SUPABASE_SERVICE_ROLE_KEY`, `WHATSAPP_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` | `wrangler secret put` (prod) · `.dev.vars` (local) | **nunca** al repo |
 | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_BACKEND_URL` | `apps/dashboard-b2b/.env` | la anon key es pública por diseño; RLS es lo que protege |
 | `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_DASHBOARD_URL` | `apps/landing-page/.env` | solo URLs |
 

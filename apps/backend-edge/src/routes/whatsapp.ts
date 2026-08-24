@@ -7,11 +7,21 @@ export const whatsapp = new Hono<{ Bindings: Env }>();
 
 /** Handshake de verificacion del webhook (Meta lo llama una sola vez). */
 whatsapp.get("/webhook/whatsapp", (c) => {
+  const expected = c.env.WHATSAPP_VERIFY_TOKEN;
+
+  // Sin el secreto configurado, `undefined === undefined` daría por bueno un
+  // handshake sin token: cualquiera podría registrar su webhook contra este
+  // worker. Se corta antes de comparar.
+  if (!expected) {
+    console.error("WHATSAPP_VERIFY_TOKEN sin configurar: wrangler secret put WHATSAPP_VERIFY_TOKEN");
+    return c.text("Not configured", 500);
+  }
+
   const mode = c.req.query("hub.mode");
   const token = c.req.query("hub.verify_token");
   const challenge = c.req.query("hub.challenge");
 
-  if (mode === "subscribe" && token === c.env.WHATSAPP_VERIFY_TOKEN && challenge) {
+  if (mode === "subscribe" && token === expected && challenge) {
     return c.text(challenge, 200);
   }
   return c.text("Forbidden", 403);

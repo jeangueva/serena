@@ -2,7 +2,6 @@ export interface Env {
   // vars (wrangler.toml)
   SUPABASE_URL: string;
   WHATSAPP_PHONE_NUMBER_ID: string;
-  WHATSAPP_VERIFY_TOKEN: string;
   WHATSAPP_GRAPH_VERSION: string;
   /** Plantilla aprobada por Meta para abrir conversación fuera de las 24 h. */
   WHATSAPP_TEMPLATE_NAME: string;
@@ -13,6 +12,7 @@ export interface Env {
   SUPABASE_SERVICE_ROLE_KEY: string;
   WHATSAPP_TOKEN: string;
   WHATSAPP_APP_SECRET: string;
+  WHATSAPP_VERIFY_TOKEN: string;
   ANTHROPIC_API_KEY: string;
   OPENAI_API_KEY: string;
 }
