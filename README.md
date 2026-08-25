@@ -157,6 +157,10 @@ duele el pecho.
   en `urgency_alerts` se escribe **antes** de contestarle al paciente: si el envío por WhatsApp
   falla, la clínica igual se entera. Acusar recibo guarda quién y cuándo, y no se puede borrar
   la alerta desde el panel — el registro de que alguien fue avisado es el punto de la tabla.
+- **Escalado.** Un cron cada 5 min (`[triggers]` en `wrangler.toml`) reenvía las alertas que
+  nadie acusó recibo tras `ESCALATION_MINUTES`. Se marca `escalated_at` para no repetir el
+  aviso cada barrido, y **solo se marca si el envío salió bien**: perder un reintento es mejor
+  que dar por avisada una urgencia que no lo está.
 - **Reintentos.** `withRetry` (backoff exponencial + jitter) envuelve Graph API y Whisper. Solo
   reintenta 408/429/5xx y fallos de red; un 4xx no se repite porque repetirlo no lo arregla.
 
@@ -184,6 +188,14 @@ pnpm -r build                              # worker dry-run + vite + next
 ```
 
 Levantar cada pieza por separado desde la raíz:
+
+El cron del escalado no corre con `wrangler dev` normal. Para probarlo:
+
+```bash
+cd apps/backend-edge
+pnpm wrangler dev --test-scheduled
+curl "http://localhost:8787/__scheduled?cron=*/5+*+*+*+*"
+```
 
 ```bash
 pnpm dev:backend      # worker  · http://localhost:8787
@@ -216,4 +228,5 @@ servicio en red. **Si desplegás un fork, ese enlace tiene que apuntar al tuyo**
 - Export de la ficha a la historia clínica (HL7/FHIR) — está vendido en la landing, no construido.
 - Purga programada de `processed_messages` (hay un `cron.schedule` de ejemplo en la migración 0003).
 - Revisión humana antes de dar la ficha por buena: hoy `completed` se marca solo.
-- Escalado si nadie acusa recibo de una urgencia: hoy la alerta espera en el panel indefinidamente.
+- Segundo destinatario para el escalado: hoy reenvía al mismo `ALERT_WEBHOOK_URL`. Una guardia
+  real quiere que el reenvío vaya a otro lado (SMS, otro turno), no al canal que ya se ignoró.

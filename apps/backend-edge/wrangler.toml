@@ -14,6 +14,12 @@ WHATSAPP_TEMPLATE_NAME = "serena_invitacion_onboarding"
 WHATSAPP_TEMPLATE_LANG = "es"
 ANTHROPIC_MODEL = "claude-sonnet-5"
 TRANSCRIPTION_MODEL = "whisper-1"
+ESCALATION_MINUTES = "10"
+
+# Barrido de urgencias sin atender. Cada 5 min, con umbral de ESCALATION_MINUTES:
+# el retraso real de un aviso está entre 10 y 15 minutos.
+[triggers]
+crons = ["*/5 * * * *"]
 
 [observability]
 enabled = true

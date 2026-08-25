@@ -1,5 +1,12 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { EMPTY_EXTRACTED_DATA, type Database, type ExtractedData, type MessageType, type Patient } from "@serena/types";
+import {
+  EMPTY_EXTRACTED_DATA,
+  type Database,
+  type ExtractedData,
+  type MessageType,
+  type Patient,
+  type UrgencyAlert,
+} from "@serena/types";
 import type { Env } from "../types";
 
 /**
@@ -97,6 +104,41 @@ export async function insertUrgencyAlert(
   });
 
   if (error) throw new Error(`Supabase insertUrgencyAlert: ${error.message}`);
+}
+
+/** Alertas sin acusar recibo y sin escalar, de todas las clínicas. */
+export async function pendingUnescalatedAlerts(db: SupabaseClient<Database>): Promise<UrgencyAlert[]> {
+  const { data, error } = await db
+    .from("urgency_alerts")
+    .select("*")
+    .is("acknowledged_at", null)
+    .is("escalated_at", null)
+    .order("created_at", { ascending: true })
+    .limit(200);
+
+  if (error) throw new Error(`Supabase pendingUnescalatedAlerts: ${error.message}`);
+  return data ?? [];
+}
+
+export async function markEscalated(
+  db: SupabaseClient<Database>,
+  alertIds: string[],
+  now: Date,
+): Promise<void> {
+  const { error } = await db
+    .from("urgency_alerts")
+    .update({ escalated_at: now.toISOString() })
+    .in("id", alertIds);
+
+  if (error) throw new Error(`Supabase markEscalated: ${error.message}`);
+}
+
+export async function patientNames(
+  db: SupabaseClient<Database>,
+  patientIds: string[],
+): Promise<Map<string, string>> {
+  const { data } = await db.from("patients").select("id, full_name").in("id", patientIds);
+  return new Map((data ?? []).map((p) => [p.id, p.full_name]));
 }
 
 export async function logMessage(

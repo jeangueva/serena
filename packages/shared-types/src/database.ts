@@ -47,6 +47,8 @@ export type UrgencyAlert = {
   created_at: string;
   acknowledged_at: string | null;
   acknowledged_by: string | null;
+  /** Cuándo se reenvió el aviso por falta de acuse de recibo. */
+  escalated_at: string | null;
 };
 
 export type ProcessedMessage = {
@@ -94,11 +96,15 @@ export interface Database {
       };
       urgency_alerts: {
         Row: UrgencyAlert;
-        Insert: Omit<UrgencyAlert, "id" | "created_at" | "acknowledged_at" | "acknowledged_by"> & {
+        Insert: Omit<
+          UrgencyAlert,
+          "id" | "created_at" | "acknowledged_at" | "acknowledged_by" | "escalated_at"
+        > & {
           id?: string;
           created_at?: string;
           acknowledged_at?: string | null;
           acknowledged_by?: string | null;
+          escalated_at?: string | null;
         };
         Update: Partial<Omit<UrgencyAlert, "id" | "clinic_id" | "patient_id">>;
         Relationships: [];

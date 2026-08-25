@@ -8,6 +8,8 @@ export interface Env {
   WHATSAPP_TEMPLATE_LANG: string;
   ANTHROPIC_MODEL: string;
   TRANSCRIPTION_MODEL: string;
+  /** Minutos sin acuse de recibo antes de reenviar el aviso de urgencia. */
+  ESCALATION_MINUTES: string;
   // secrets (wrangler secret put / .dev.vars)
   SUPABASE_SERVICE_ROLE_KEY: string;
   WHATSAPP_TOKEN: string;

@@ -32,7 +32,12 @@ export function UrgencyBanner() {
                 {alert.frase_paciente && (
                   <p className="mt-1 text-sm italic text-ink-soft">“{alert.frase_paciente}”</p>
                 )}
-                <p className="mt-1 text-xs text-ink-faint tabular">{formatDateTime(alert.created_at)}</p>
+                <p className="mt-1 text-xs text-ink-faint tabular">
+                  {formatDateTime(alert.created_at)}
+                  {alert.escalated_at && (
+                    <span className="ml-2 font-medium text-danger">· reenviado, nadie acusó recibo</span>
+                  )}
+                </p>
               </div>
             </div>
 
