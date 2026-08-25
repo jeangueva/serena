@@ -1,7 +1,7 @@
 import type { UrgencyAlert } from "@serena/types";
 import type { Env } from "../types";
 import { markEscalated, pendingUnescalatedAlerts, patientNames, serviceClient } from "./db";
-import { notifyUrgency } from "./notify";
+import { notifyEscalation } from "./notify";
 
 /** Minutos que una alerta puede quedar sin acuse de recibo antes de reenviarse. */
 export const DEFAULT_ESCALATION_MINUTES = 10;
@@ -60,7 +60,7 @@ export async function runEscalationSweep(env: Env, now: Date = new Date()): Prom
     );
 
     try {
-      await notifyUrgency(env, resumen, alert.patient_id);
+      await notifyEscalation(env, resumen, alert.patient_id);
       escaladas.push(alert.id);
     } catch (err) {
       // Sin marcar: el próximo barrido lo vuelve a intentar. Perder un

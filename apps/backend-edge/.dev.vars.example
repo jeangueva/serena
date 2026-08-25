@@ -5,5 +5,8 @@ WHATSAPP_APP_SECRET="abc123..."
 WHATSAPP_VERIFY_TOKEN="un-string-aleatorio-que-inventas-tu"
 ANTHROPIC_API_KEY="sk-ant-..."
 OPENAI_API_KEY="sk-..."
-# Opcional: URL que recibe el aviso de urgencia (Slack, guardia, etc.).
+# Opcional: primer aviso de urgencia (Slack, canal de recepción).
 ALERT_WEBHOOK_URL=""
+# Opcional: reenvío cuando nadie acusa recibo. Tiene que ser OTRA vía —
+# SMS, guardia, el turno siguiente— o el escalado no escala nada.
+ESCALATION_WEBHOOK_URL=""

@@ -84,7 +84,8 @@ wrangler secret put WHATSAPP_APP_SECRET
 wrangler secret put WHATSAPP_VERIFY_TOKEN
 wrangler secret put ANTHROPIC_API_KEY
 wrangler secret put OPENAI_API_KEY
-wrangler secret put ALERT_WEBHOOK_URL   # opcional
+wrangler secret put ALERT_WEBHOOK_URL        # opcional
+wrangler secret put ESCALATION_WEBHOOK_URL   # opcional
 pnpm deploy
 ```
 
@@ -161,6 +162,11 @@ duele el pecho.
   nadie acusó recibo tras `ESCALATION_MINUTES`. Se marca `escalated_at` para no repetir el
   aviso cada barrido, y **solo se marca si el envío salió bien**: perder un reintento es mejor
   que dar por avisada una urgencia que no lo está.
+- **Dos canales, a propósito.** El primer aviso va a `ALERT_WEBHOOK_URL` (recepción); el
+  reenvío va a `ESCALATION_WEBHOOK_URL`, que tiene que ser **otra vía** —SMS, guardia, turno
+  siguiente—. Si falta, cae al primero y lo registra como fallback: reenviar al canal que ya
+  se ignoró no es escalar. El payload lleva `kind: "urgency" | "escalation"` para que el otro
+  extremo enrute distinto.
 - **Reintentos.** `withRetry` (backoff exponencial + jitter) envuelve Graph API y Whisper. Solo
   reintenta 408/429/5xx y fallos de red; un 4xx no se repite porque repetirlo no lo arregla.
 
@@ -169,7 +175,7 @@ duele el pecho.
 | Variable | Dónde | Nota |
 |---|---|---|
 | `SUPABASE_URL`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_GRAPH_VERSION`, `WHATSAPP_TEMPLATE_NAME`, `WHATSAPP_TEMPLATE_LANG`, `ANTHROPIC_MODEL`, `TRANSCRIPTION_MODEL` | `apps/backend-edge/wrangler.toml` → `[vars]` | públicas, van al repo |
-| `SUPABASE_SERVICE_ROLE_KEY`, `WHATSAPP_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `ALERT_WEBHOOK_URL` | `wrangler secret put` (prod) · `.dev.vars` (local) | **nunca** al repo |
+| `SUPABASE_SERVICE_ROLE_KEY`, `WHATSAPP_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `ALERT_WEBHOOK_URL`, `ESCALATION_WEBHOOK_URL` | `wrangler secret put` (prod) · `.dev.vars` (local) | **nunca** al repo |
 | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_BACKEND_URL`, `VITE_SOURCE_URL` | `apps/dashboard-b2b/.env` | la anon key es pública por diseño; RLS es lo que protege |
 | `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_DASHBOARD_URL`, `NEXT_PUBLIC_SOURCE_URL` | `apps/landing-page/.env` | solo URLs |
 
@@ -228,5 +234,5 @@ servicio en red. **Si desplegás un fork, ese enlace tiene que apuntar al tuyo**
 - Export de la ficha a la historia clínica (HL7/FHIR) — está vendido en la landing, no construido.
 - Purga programada de `processed_messages` (hay un `cron.schedule` de ejemplo en la migración 0003).
 - Revisión humana antes de dar la ficha por buena: hoy `completed` se marca solo.
-- Segundo destinatario para el escalado: hoy reenvía al mismo `ALERT_WEBHOOK_URL`. Una guardia
-  real quiere que el reenvío vaya a otro lado (SMS, otro turno), no al canal que ya se ignoró.
+- Segundo escalón: si tampoco atienden el reenvío, no pasa nada más. Falta decidir a quién se
+  despierta después (¿médico de guardia? ¿dirección?) y con qué demora.
