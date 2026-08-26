@@ -38,8 +38,8 @@ export function Hero() {
       <div className="mt-16 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
         {[
           { stat: "0", label: "formularios que el paciente tiene que llenar" },
-          { stat: "8 min", label: "ahorrados por ficha en la recepción" },
-          { stat: "3×", label: "más fichas completas que con el PDF por email" },
+          { stat: "0", label: "aplicaciones que tiene que instalar" },
+          { stat: "1", label: "pregunta por mensaje, siempre" },
         ].map((item) => (
           <div key={item.label} className="bg-surface px-6 py-7">
             <p className="text-3xl font-semibold tracking-tight text-ink">{item.stat}</p>

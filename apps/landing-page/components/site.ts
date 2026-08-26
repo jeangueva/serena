@@ -18,7 +18,7 @@ export const PLANS = [
       "300 onboardings al mes",
       "Usuarios ilimitados en el panel",
       "Campos clínicos personalizados",
-      "Exportación a tu historia clínica",
+      "Exportación a tu historia clínica (próximamente)",
       "Soporte prioritario",
     ],
     featured: true,
@@ -27,7 +27,7 @@ export const PLANS = [
     name: "Red",
     price: "A medida",
     tagline: "Varias sedes, integración con tu HIS y acuerdos de nivel de servicio.",
-    features: ["Volumen ilimitado", "Multi-sede con datos separados", "Integración HL7 / FHIR", "Onboarding asistido"],
+    features: ["Volumen ilimitado", "Multi-sede con datos separados", "Integración HL7 / FHIR (próximamente)", "Onboarding asistido"],
     featured: false,
   },
 ] as const;
